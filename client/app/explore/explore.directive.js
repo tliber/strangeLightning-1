@@ -263,9 +263,12 @@ angular.module('thesisApp')
               }
             });
 
-            object.position.x = Math.random() * 500000 - 200000;
-            object.position.y = Math.random() * 300000 - 50000;
-            object.position.z = Math.random() * 500000 - 200000;
+            object.position.x = product.x - 200000;
+            object.position.y = product.y - 50000;
+            object.position.z = product.z - 200000;
+            // object.position.x = Math.random() * 500000 - 200000;
+            // object.position.y = Math.random() * 300000 - 50000;
+            // object.position.z = Math.random() * 500000 - 200000;
             object.rotation.x = degInRad(Math.random() * 90);
             object.rotation.y = degInRad(Math.random() * 90);
             object.rotation.z = degInRad(Math.random() * 90);
@@ -388,14 +391,14 @@ angular.module('thesisApp')
           // if no product previously showing, animate window out
           if(!pastProduct) {
             $('#showcase-container').animate({
-              'margin-right': '+=1000'
+              'margin-right': '+=1000px'
             }, 500);
           }
         };
 
         scope.close = function() {
           $('#showcase-container').animate({
-            'margin-right': '-=1000'
+            'margin-right': '-=1000px'
           }, 500);
           scope.showcase = null;
         }
