@@ -31,19 +31,21 @@ function isAuthenticated() {
       //   res.end('Improper Login Credentials. Please try to login again.')
       // }
       console.log('this should be the req.header.auth', req.headers.authorization)
-      validateJwt(req, res, next);
+        // validateJwt(req, res, next);
+        // Attach user to request
+      console.log('request before authentication', req)
+      var validate = function(req, res, next) {
+        console.log('attaching user', req.cookies.user._id)
+        User.findById(req.cookies.user._id, function(err, user) {
+          if (err) return next(err);
+          if (!user) return res.send(401);
+          req.user = req.cookies.user;
 
+          // next();
+        })
+      }
+      validate(req, res, next)
     })
-    // Attach user to request
-    .use(function(req, res, next) {
-      console.log('attaching user')
-      User.findById(req.user._id, function(err, user) {
-        if (err) return next(err);
-        if (!user) return res.send(401);
-        req.user = user;
-        next();
-      });
-    });
 }
 
 /**
@@ -86,7 +88,8 @@ function setTokenCookie(req, res) {
   // console.log('req.body-------------', req.body.user);
   var token = signToken(req.user._id, req.user.role);
   res.cookie('token', JSON.stringify(token));
-  // console.log('this is the cookie being set', JSON.stringify(token))
+  res.cookie('user', req.user)
+    // console.log('this is the cookie being set', JSON.stringify(token))
   res.redirect('/');
 }
 
