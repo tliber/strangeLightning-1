@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('thesisApp')
-  .controller('LoginCtrl', function($scope, Auth, $location, $window, $http) {
+  .controller('LoginCtrl', ['$scope', 'Auth', '$location', '$window', '$document', '$http', function($scope, Auth, $location, $window, $document, $http) {
     $scope.user = {};
     $scope.errors = {};
 
@@ -17,6 +17,14 @@ angular.module('thesisApp')
     //     'margin-right': '-=1000'
     //   }, 500);
     // }
+    $scope.authenticate = function(document) {
+      var authenticate = document.createElement('script');
+      authenticate.type = 'text/javascript';
+      authenticate.async = true;
+      authenticate.id = 'amazon-login-sdk';
+      authenticate.src = 'https://api-cdn.amazon.com/sdk/login1.js';
+      document.getElementById('amazon-root').appendChild(authenticate);
+    };
 
 
     //verifies public client key to amazon API
@@ -24,40 +32,45 @@ angular.module('thesisApp')
       $http.get('auth/amazon/publicClientAuth').success(function(data) {
         amazon.Login.setClientId(data)
           //Loads Amazon SDK
-          (function(d) {
-            var authenticate = d.createElement('script');
-            authenticate.type = 'text/javascript';
-            authenticate.async = true;
-            authenticate.id = 'amazon-login-sdk';
-            authenticate.src = 'https://api-cdn.amazon.com/sdk/login1.js';
-            d.getElementById('amazon-root').appendChild(authenticate);
-          })(document);
+        $scope.authenticate(document)
       })
+
 
     }
     $scope.amazonLogin = function() {
-        var options = {
-          scope: 'profile'
-        };
-        amazon.Login.authorize(options, function(response) {
-          if (response.error) {
-            alert('oauth error ' + response.error);
-            return;
-          }
-          amazon.Login.retrieveProfile(response.access_token, function(response) {
-            console.log(response);
+      var options = {
+        scope: 'profile'
+      };
+      amazon.Login.authorize(options, function(response) {
+        if (response.error) {
+          alert('oauth error ' + response.error);
+          return false;
+        } else if (response.access_token) {
+          amazon.Login.retrieveProfile(response.access_token, function(data) {
+            var account = {
+              "user": data,
+            }
+            $http.post('auth/amazon/login', account)
+              // $http.post('auth/amazon/login', );
+            console.log('logged in')
           })
-        });
-        // return false;
-      }
-      // $scope.LoginWithAmazon = function() {
-      //   var options = {
-      //     scope: 'profile'
-      //   };
-      //   amazon.Login.authorize(options,
-      //     'https://sphereable.com/handle_login.php');
-      //   return false;
-      // };
+        }
+      });
+      return false;
+    }
+    $scope.amazonLogout = function() {
+      console.log('logout from Sphereable')
+      amazon.Login.logout()
+
+    };
+    // $scope.LoginWithAmazon = function() {
+    //   var options = {
+    //     scope: 'profile'
+    //   };
+    //   amazon.Login.authorize(options,
+    //     'https://sphereable.com/handle_login.php');
+    //   return false;
+    // };
     $scope.login = function(form) {
       $scope.submitted = true;
 
@@ -79,4 +92,4 @@ angular.module('thesisApp')
     $scope.loginOauth = function(provider) {
       $window.location.href = '/auth/' + provider;
     };
-  });
+  }]);

@@ -8,7 +8,7 @@ angular.module('thesisApp')
       $scope.isLoggedIn = Auth.isLoggedIn;
       $scope.isAdmin = Auth.isAdmin;
       $scope.getCurrentUser = Auth.getCurrentUser;
-      if(localStorageService.get('Cart')){
+      if (localStorageService.get('Cart')) {
         $scope.cartQty = localStorageService.get('Cart')['Qty'] || 0;
       }
       $scope.suggestedProducts = [];
@@ -21,6 +21,7 @@ angular.module('thesisApp')
         Auth.logout();
         $scope.cartQty = 0;
         $location.path('/login');
+        $scope.cartQty = localStorageService.get('Cart')['Qty'] = 0;
       };
 
       $scope.isActive = function(route) {

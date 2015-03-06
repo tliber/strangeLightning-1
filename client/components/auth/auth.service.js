@@ -3,7 +3,7 @@
 angular.module('thesisApp')
   .factory('Auth', function Auth($location, $rootScope, $http, User, Vendor, $cookieStore, $q) {
     var currentUser = {};
-    if($cookieStore.get('token')) {
+    if ($cookieStore.get('token')) {
       currentUser = User.get();
     }
 
@@ -81,7 +81,9 @@ angular.module('thesisApp')
       changePassword: function(oldPassword, newPassword, callback) {
         var cb = callback || angular.noop;
 
-        return User.changePassword({ id: currentUser._id }, {
+        return User.changePassword({
+          id: currentUser._id
+        }, {
           oldPassword: oldPassword,
           newPassword: newPassword
         }, function(user) {
@@ -106,6 +108,7 @@ angular.module('thesisApp')
        * @return {Boolean}
        */
       isLoggedIn: function() {
+        console.log("current user from is logged in: ", currentUser)
         return currentUser.hasOwnProperty('role');
       },
 
@@ -113,13 +116,13 @@ angular.module('thesisApp')
        * Waits for currentUser to resolve before checking if user is logged in
        */
       isLoggedInAsync: function(cb) {
-        if(currentUser.hasOwnProperty('$promise')) {
+        if (currentUser.hasOwnProperty('$promise')) {
           currentUser.$promise.then(function() {
             cb(true);
           }).catch(function() {
             cb(false);
           });
-        } else if(currentUser.hasOwnProperty('role')) {
+        } else if (currentUser.hasOwnProperty('role')) {
           cb(true);
         } else {
           cb(false);

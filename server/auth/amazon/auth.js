@@ -1,45 +1,32 @@
-var passport = require('passport');
-var AmazonStrategy = require('passport-amazon').Strategy;
-
-
-// exports.setup = function(config) {
-// exports.setup = function(User, config) {
-//   passport.use(new FacebookStrategy({
-//       clientID: config.facebook.clientID,
-//       clientSecret: config.facebook.clientSecret,
-//       callbackURL: config.facebook.callbackURL
-//     }
-// }
-// passport.use(new AmazonStrategy({
-//     clientID: config.amazonOAuth.clientID,
-//     clientSecret: config.amazonOAuth.clientSecret,
-//     callbackURL: config.amazonOAuth.callbackURL
-//   },
-//   function(accessToken, refreshToken, profile, done) {
-//     User.findOne({
-//         'amazon.Id': profile.id
-//       },
-//       function(err, user) {
-//         if (err) { 
-//           return done(err);
-//         }
-//         if (!user) {
-//           user = new User({
-//             name: profile.displayName,
-//             email: profile.emails[0].value,
-//             role: 'user',
-//             username: profile.username,
-//             provider: 'amazon',
-//             facebook: profile._json
-//           });
-//           user.save(function(err) {
-//             if (err) done(err);
-//             return done(err, user);
-//           });
-//         } else {
-//           return done(err, user);
-//         }
-//       })
-//   }
-// ));
-// };
+var User = require('../../api/user/user.model')
+exports.setup = function(profile, done) {
+  console.log('this is the profile before saving: ', profile)
+  User.findOne({
+      'amazon.id': profile.CustomerId
+    },
+    function(err, user) {
+      if (err) {
+        console.log('err from line 8 in auth first function', err);
+      }
+      if (!user) {
+        user = new User({
+          name: profile.Name,
+          email: profile.PrimaryEmail,
+          role: 'user',
+          username: profile.Name,
+          provider: 'amazon',
+          amazon: profile.CustomerId
+        });
+        user.save(function(err) {
+          if (err) console.log('error saving user', err);
+        // console.log('useeeeerrrrrr', user)
+        // console.log(done)
+          done(user);
+          return user;
+        });
+      } else {
+        done(user)
+        return user;
+      }
+    })
+}
