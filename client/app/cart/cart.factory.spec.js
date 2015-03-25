@@ -24,6 +24,7 @@ describe('CartFactory', function() {
   afterEach(function() {
     $httpBackend.verifyNoOutstandingExpectation();
     $httpBackend.verifyNoOutstandingRequest();
+
   });
 
   describe('factory', function() {
@@ -71,17 +72,7 @@ describe('CartFactory', function() {
 
     })
     it('should have amazonAddProduct add product to local cart if productId different as first product', function() {
-      data = {
-        'CartId': [1],
-        'HMAC': [555],
-        'CartItems': [{
-          'CartItem': [{
-            'ASIN': [11111],
-            'quantity': 1
-          }]
-        }],
-        'Quantity': 1
-      };
+
       //modify have multiple functions for the call so we mock the data munipulation
       $httpBackend.whenPOST("/api/amazoncarts/modify").respond(data)
       factory.amazonCreateCart(11111);

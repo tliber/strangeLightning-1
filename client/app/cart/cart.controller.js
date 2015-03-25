@@ -58,13 +58,12 @@ angular.module('thesisApp')
         height: block - navbar - 1
       });
 
-      $scope.close = function() {
-        $('#cart').animate({
-          'margin-right': '-=1000'
-        }, 500);
-        $state.transitionTo('catalog');
-      };
-
+  // $scope.close = function() {
+  //   $('#cart').animate({
+  //     'margin-right': '-=1000'
+  //   }, 500);
+  //   $state.transitionTo('catalog');
+  // };
       //open Amazon cart in a new tab
       $scope.goToAmazonCart = function() {
         window.open(
